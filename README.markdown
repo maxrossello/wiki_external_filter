@@ -3,6 +3,12 @@
               Copyright (C) 2010 Alexander Tsvyashchenko,
               http://www.ndl.kiev.ua - see COPYRIGHT.txt
 
+NOT THE ORIGINAL
+================
+
+This is a fork.
+**NOTE works only on Redmine > v2.0**
+
 Overview
 ========
 
@@ -20,12 +26,12 @@ ones is typically as easy as adding several lines in plugin config file.
 Installation
 ============
 
-**NOTE works only on Redmine > v2.0**
-
 1. It's recommended (but not required) to install
    [popen4](http://popen4.rubyforge.org/) library first as without it plugin is
    unable to capture stderr output of external command, so it might be hard to debug
    it if things go wrong.
+   **Note**: If you are using rvm you need to add Gemfile.local with gem 'open4' and execute bundle install otherwise
+   it will not be found in the environment and you will never get in to the require 'open4' section which will rise LoadError.
 2. Get sources from [github](http://github.com/mkinski/wiki_external_filter).
 3. See [Installing a plugin](http://www.redmine.org/wiki/redmine/Plugins) on
    Redmine site.
