@@ -20,7 +20,7 @@ ones is typically as easy as adding several lines in plugin config file.
 Installation
 ============
 
-** NOTE works only on Redmine > v2.0 **
+**NOTE works only on Redmine > v2.0**
 
 1. It's recommended (but not required) to install
    [popen4](http://popen4.rubyforge.org/) library first as without it plugin is
@@ -36,6 +36,7 @@ Installation
 
    Graphviz will not work until modification MACRO_RE see ungoing [Issue 3061](http://www.redmine.org/issues/3061)
    under app/helper/application_helper.rb
+   
    MACROS_RE = /
                 (!)?                        # escaping
                 (
