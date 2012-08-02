@@ -36,7 +36,7 @@ Installation
 
    Graphviz will not work until modification MACRO_RE see ungoing [Issue 3061](http://www.redmine.org/issues/3061)
    under app/helper/application_helper.rb
-   
+   <pre>
    MACROS_RE = /
                 (!)?                        # escaping
                 (
@@ -46,7 +46,7 @@ Installation
                 \}\}                        # closing tag
                 )
               /
-
+   </pre>
    Do not use commas in macro because it would be splited in different arguments and therefore plugin will not work.
 
 7. To allow passing attachments names as macros arguments Redmine core should be patched accordingly: here's [the patch for Redmine 1.0.2](http://www.ndl.kiev.ua/downloads/redmine-1.0.2-attachments.patch) and here is [the patch for Redmine 0.9.x](http://www.ndl.kiev.ua/downloads/redmine-attachments-in-macros.patch.gz).
