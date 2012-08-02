@@ -20,38 +20,33 @@ ones is typically as easy as adding several lines in plugin config file.
 Installation
 ============
 
+** NOTE works only on Redmine > v2.0 **
+
 1. It's recommended (but not required) to install
    [popen4](http://popen4.rubyforge.org/) library first as without it plugin is
    unable to capture stderr output of external command, so it might be hard to debug
    it if things go wrong.
-2. Get sources from [github](http://github.com/ndl/wiki_external_filter).
+2. Get sources from [github](http://github.com/mkinski/wiki_external_filter).
 3. See [Installing a plugin](http://www.redmine.org/wiki/redmine/Plugins) on
    Redmine site.
-4. Copy wiki_external_filter.yml from config folder of plugin
-   directory to the config folder of your redmine installation.
 5. After installation it's **strongly recommended** to go to plugin settings and
-   configure caching: Administration -> Plugins -> Wiki External Filter Plugin: Configure and follow instructions. Note that RoR file-based caching suggested by default does
-   not implement proper cache expiration: you should either setup a cron task to
-   clean cache or do it manually from time to time.
+   configure caching: Administration -> Plugins -> Wiki External Filter Plugin: Configure and follow instructions.
 6. To successfully use macros with argument expressions, it's necessary
    to patch wiki formatting routine so that it preserves macros arguments.
 
-    **Redmine 1.0.2:** apply [this patch](http://www.ndl.kiev.ua/downloads/redmine-1.0.2-macros-escaping.patch) to the Redmine core and go to step 7, there's no need to patch individual wiki formatters anymore.
+   Graphviz will not work until modification MACRO_RE see ungoing [Issue 3061](http://www.redmine.org/issues/3061)
+   under app/helper/application_helper.rb
+   MACROS_RE = /
+                (!)?                        # escaping
+                (
+                \{\{                        # opening tag
+                ([\w]+)                     # macro name
+                (\((.*)\))?             # optional arguments
+                \}\}                        # closing tag
+                )
+              /
 
-    **Redmine 0.9.x:** if you use Markdown Extra, switch to the following fork of [redmine_markdown_extra_formatter](http://github.com/ndl/redmine_markdown_extra_formatter) that contains all necessary changes. [This patch](http://www.ndl.kiev.ua/downloads/redmine_markdown_extra_formatter_fixes.patch.gz) is for older Markdown Extra formatter version and should not be used for new installations.
-
-    **Note**: if you install Markdown Extra formatter - you should enable it in Administration -> Settings -> General -> Text formatting.
-
-    If you use wiki formatter other than Markdown Extra (including default Textile formatter) **you will have to change your wiki formatter yourselves** as follows:
-    * [Change MACROS_RE](http://www.redmine.org/issues/3061) regexp not to stop
-      too early - in the issue description Textile wiki formatter is mentioned,
-      but in fact this change should be done for whatever wiki formatter you use.
-    * [Change arguments parsing](http://www.redmine.org/boards/3/topics/4987#message-9854) - again,
-      should be done for whatever wiki formatter you use.
-    * For some of the formatters escaping should be avoided for
-      macro arguments, see how it is done for Markdown Extra wiki formatter.
-
-    [Preliminary version of patch](http://www.redmine.org/boards/3/topics/10649#message-15222) for Textile support was made available by Yuya Nishihara, according to the author "It works but really messy" but I haven't tested it so cannot comment on it.
+   Do not use commas in macro because it would be splited in different arguments and therefore plugin will not work.
 
 7. To allow passing attachments names as macros arguments Redmine core should be patched accordingly: here's [the patch for Redmine 1.0.2](http://www.ndl.kiev.ua/downloads/redmine-1.0.2-attachments.patch) and here is [the patch for Redmine 0.9.x](http://www.ndl.kiev.ua/downloads/redmine-attachments-in-macros.patch.gz).
 
@@ -109,7 +104,7 @@ Example of usage:
     {{graphviz(
     digraph finite_state_machine {
         rankdir=LR;
-        size="8,5"
+        size="8.5"
         node [shape = doublecircle]; LR_0 LR_3 LR_4 LR_8;
         node [shape = circle];
         LR_0 -> LR_2 [ label = "SS(B)" ];

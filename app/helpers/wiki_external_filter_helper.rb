@@ -1,14 +1,15 @@
 require 'digest/sha2'
+include Redmine::WikiFormatting::Macros::Definitions
 
 module WikiExternalFilterHelper
 
   def load_config
     unless @config
-      config_file = "#{RAILS_ROOT}/config/wiki_external_filter.yml"
+      config_file = "#{Rails.root}/plugins/wiki_external_filter/config/wiki_external_filter.yml"
       unless File.exists?(config_file)
         raise "Config not found: #{config_file}"
       end
-      @config = YAML.load_file(config_file)[RAILS_ENV]
+      @config = YAML.load_file(config_file)[Rails.env]
     end
     @config
   end
@@ -26,7 +27,7 @@ module WikiExternalFilterHelper
 
   def build(text, attachments, macro, info)
 
-    name = Digest::SHA256.hexdigest(text)
+    name = Digest::SHA256.hexdigest(text.to_s)
     result = {}
     content = nil
     cache_key = nil
@@ -41,27 +42,29 @@ module WikiExternalFilterHelper
     if expires > 0
       cache_key = self.construct_cache_key(macro, name)
       begin
-        content = read_fragment cache_key, :expires_in => expires.seconds
+        content = Rails.cache.read cache_key, :expires_in => expires.seconds
       rescue
-        RAILS_DEFAULT_LOGGER.error "Failed to load cache: #{cache_key}, error: $!"
+        Rails.logger.error "Failed to load cache: #{cache_key}, error: $! #{error} #{$@}"
       end
     end
 
     if content
-      result[:source] = text
+      result[:source] = text.to_s
       result[:content] = content
-      RAILS_DEFAULT_LOGGER.debug "from cache: #{cache_key}"
+      Rails.logger.debug "from cache: #{cache_key}"
     else
       result = self.build_forced(text, attachments, info)
       if result[:status]
         if expires > 0
           begin
-            write_fragment cache_key, result[:content], :expires_in => expires.seconds
-            RAILS_DEFAULT_LOGGER.debug "cache saved: #{cache_key}"
+            Rails.cache.write cache_key, result[:content], :expires_in => expires.seconds
+	          Rails.logger.debug "cache saved: #{cache_key} expires #{expires.seconds}"
           rescue
-            RAILS_DEFAULT_LOGGER.error "Failed to save cache: #{cache_key}, error: $!"
-	  end
-	end
+            Rails.logger.error "Failed to save cache: #{cache_key}, result content #{result[:content]}, error: $!"
+	        end
+        else
+	        raise "please set expires time under plugins settings"
+	      end
       else
         raise "Error applying external filter: stdout is #{result[:content]}, stderr is #{result[:errors]}"
       end
@@ -79,7 +82,7 @@ module WikiExternalFilterHelper
 
     if info['replace_attachments'] and attachments
       attachments.each do |att|
-        text.gsub!(/#{att.filename.downcase}/i, att.diskfile)
+        text.to_s.gsub!(/#{att.filename.downcase}/i, att.diskfile)
       end
     end
 
@@ -87,8 +90,11 @@ module WikiExternalFilterHelper
     content = []
     errors = ""
 
+    text          = text.first.to_s.gsub("<br />", "\n")
+    Rails.logger.debug "\n Text #{text} \n"
+
     info['outputs'].each do |out|
-      RAILS_DEFAULT_LOGGER.info "executing command: #{out['command']}"
+      Rails.logger.info "executing command: #{out['command']}"
 
       c = nil
       e = nil
@@ -100,7 +106,7 @@ module WikiExternalFilterHelper
 
         Open4::popen4(out['command']) { |pid, fin, fout, ferr|
           fin.write out['prolog'] if out.key?('prolog')
-          fin.write CGI.unescapeHTML(text)
+          fin.write text
           fin.write out['epilog'] if out.key?('epilog')
           fin.close
           c, e = [fout.read, ferr.read]
@@ -108,14 +114,14 @@ module WikiExternalFilterHelper
       rescue LoadError
         IO.popen(out['command'], 'r+b') { |f|
           f.write out['prolog'] if out.key?('prolog')
-          f.write CGI.unescapeHTML(text)
+          f.write text
           f.write out['epilog'] if out.key?('epilog')
           f.close_write
           c = f.read
-	}
+	      }
       end
 
-      RAILS_DEFAULT_LOGGER.debug("child status: sig=#{$?.termsig}, exit=#{$?.exitstatus}")
+      Rails.logger.debug("child status: sig=#{$?.termsig}, exit=#{$?.exitstatus}")
 
       content << c
       errors += e if e

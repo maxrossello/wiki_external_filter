@@ -1,6 +1,7 @@
 require 'redmine'
+require "#{Rails.root}/plugins/wiki_external_filter/app/helpers/wiki_external_filter_helper"
 
-RAILS_DEFAULT_LOGGER.info 'Starting wiki_external_filter plugin for Redmine'
+Rails.logger.info 'Starting wiki_external_filter plugin for Redmin'
 
 Redmine::Plugin.register :wiki_external_filter do
   name 'Wiki External Filter Plugin'
@@ -8,19 +9,21 @@ Redmine::Plugin.register :wiki_external_filter do
   description 'Processes given text using external command and renders its output'
   author_url 'http://www.ndl.kiev.ua'
   version '0.0.2'
+  requires_redmine :version_or_higher => '2.0.0'
+  
   settings :default => {'cache_seconds' => '0'}, :partial => 'wiki_external_filter/settings'
 
   config = WikiExternalFilterHelper.load_config
-  RAILS_DEFAULT_LOGGER.debug "Config: #{config.inspect}"
+  Rails.logger.debug "Config: #{config.inspect}"
 
   config.keys.each do |name|
-    RAILS_DEFAULT_LOGGER.info "Registering #{name} macro with wiki_external_filter"
+    Rails.logger.info "Registering #{name} macro with wiki_external_filter"
     Redmine::WikiFormatting::Macros.register do
       info = config[name]
       desc info['description']
       macro name do |obj, args|
-        m = WikiExternalFilterHelper::Macro.new(self, args.to_s, obj.respond_to?('page') ? obj.page.attachments : nil, name, info)
-	m.render
+        m = WikiExternalFilterHelper::Macro.new(self, args, obj.respond_to?('page') ? obj.page.attachments : nil, name, info)
+        m.render
       end
 
       # code borrowed from wiki latex plugin

@@ -10,7 +10,7 @@
     Configuration example for ActiveSupport::Cache::FileStore, config/environments/production.rb file:<br/>
     <br/>
     ...<br/>
-    config.action_controller.cache_store = :file_store, &quot;#{RAILS_ROOT}/cache&quot;<br/>
+    config.action_controller.cache_store = :file_store, &quot;#{Rails.root}/cache&quot;<br/>
     ...
   </p>
   <p>
@@ -18,8 +18,8 @@
   </p>
   <p>
     Current cache settings are:<br/>
-      ActionController::Base.cache_configured? = <%= h ActionController::Base.cache_configured? ? "true" : "false" %><br/>
-      <% cache_store = ActionController::Base.respond_to?('fragment_cache_store=') ? ActionController::Base.fragment_cache_store : ActionController::Base.cache_store %>
+      <%= h ActionController::Base.perform_caching ? "true" : "false" %><br/>
+   <% cache_store = ActionController::Base.respond_to?('cache_store=') ? ActionController::Base.cache_store : ActionController::Base.cache_store %>
       ActionController::Base.cache_store = <%= h cache_store.inspect %>
   </p>
 </fieldset>
