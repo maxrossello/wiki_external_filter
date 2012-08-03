@@ -7,14 +7,42 @@ development: &development
         content_type: "image/png"
         prolog: "@startuml"
         epilog: "@enduml"
+  tikz:
+    description: "Converts latex/tikz picture to svg. It requires pdflatex and pdf2svg."
+    template: image
+    replace_attachments: true
+    outputs:
+      - command: "/usr/bin/latextool.sh -t"
+        content_type: "image/svg+xml"
+  le:
+    description: "Converts latex excerpts to png. It requires latex and divpng."
+    template: image
+    replace_attachments: true
+    outputs:
+      - command: "/usr/bin/latextool.sh -e"
+        content_type: "image/png"
+
+  latex:
+    description: "Converts latex to svg. It requires pdflatex and pdf2svg."
+    template: image
+    replace_attachments: true
+    outputs:
+      - command: "/usr/bin/latextool.sh"
+        content_type: "image/svg+xml"
   graphviz:
     description: "Constructs graph image from its textual description in DOT language, see http://www.graphviz.org"
-    template: svg
+    template: image
     outputs:
       - command: "/usr/bin/dot -Tsvg"
         content_type: "image/svg+xml"
-      - command: "/usr/bin/dot -Tpng"
-        content_type: "image/png"
+    #  - command: "/usr/bin/dot -Tpng"
+    #    content_type: "image/png"
+  gneato:
+    description: "Constructs graph image from its textual description in NEATO language, see http://www.graphviz.org"
+    template: image
+    outputs:
+      - command: "/usr/bin/neato -Tsvg"
+        content_type: "image/svg+xml"
   ritex:
     description: "Converts WebTeX expression to MathML, see http://ritex.rubyforge.org/"
     template: svg

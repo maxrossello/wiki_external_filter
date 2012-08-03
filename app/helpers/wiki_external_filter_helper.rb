@@ -127,6 +127,8 @@ module WikiExternalFilterHelper
       errors += e if e
     end
 
+    Rails.logger.debug "\n Content #{content} \n Errors #{errors} \n"
+
     result[:content] = content
     result[:errors] = errors
     result[:source] = text

@@ -54,13 +54,25 @@ Installation
               /
    </pre>
    Do not use commas in macro because it would be splited in different arguments and therefore plugin will not work.
-
-7. To allow passing attachments names as macros arguments Redmine core should be patched accordingly: here's [the patch for Redmine 1.0.2](http://www.ndl.kiev.ua/downloads/redmine-1.0.2-attachments.patch) and here is [the patch for Redmine 0.9.x](http://www.ndl.kiev.ua/downloads/redmine-attachments-in-macros.patch.gz).
+   To solve this comma issue and make also tikz/pgf possible you need to change the line under parse_macros in application_helper.rb
+   which looks 
+      <pre>      
+      #args = ($5 || '').split(',').each(&:strip)  # original
+      args = [($5 || '').strip]                    # replaced by
+      </pre>
 
 Specific filters installation instructions are below.
 
 Prefedined Macros
 =================
+
+tikz
+----
+
+Tikz/PGF is based on description in http://www.hostedredmine.com/projects/alxa/wiki/PGF_TIKZ_Redmine and latextool.sh is taken from there.
+The actual latextool.sh which has been tested here is under plugins/wiki_external_filter/lib/latextool.sh
+
+This part is unstable at the moment due to a lot of possiblities in tikz there only some pictures possible. You might need to adjust latextool.sh for loading libraries for specific tikz picture.
 
 plantuml
 --------
@@ -99,14 +111,14 @@ Rendered output:
 
 ![PlantUML output](http://www.ndl.kiev.ua/downloads/wiki_plantuml_sample.png)
 
-graphviz
---------
+dot or neato
+------------
 [Graphviz](http://www.graphviz.org/) is a tool for graph-like structures
 visualization. It's assumed that it can be called as /usr/bin/dot.
 
 Result is rendered as SVG image or PNG fallback if SVG is not supported by your browser.
 
-Example of usage:
+Example of usage DOT:
 
     {{graphviz(
     digraph finite_state_machine {
@@ -129,6 +141,11 @@ Example of usage:
         LR_8 -> LR_6 [ label = "S(b)" ];
         LR_8 -> LR_5 [ label = "S(a)" ];
     }
+    )}}
+
+Usage of neato:
+    {{gneato(
+      code like in graphviz
     )}}
 
 Rendered output:
