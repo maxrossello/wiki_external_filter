@@ -63,7 +63,7 @@ tikz
 ----
 
 Tikz/PGF is based on description in http://www.hostedredmine.com/projects/alxa/wiki/PGF_TIKZ_Redmine and latextool.sh is taken from there.
-The actual latextool.sh which has been tested here is under plugins/wiki_external_filter/lib/latextool.sh
+The actual latextool.sh which has been tested here is under plugins/wiki_external_filter/bin/latextool.sh
 
 This part is unstable at the moment due to a lot of possiblities in tikz there only some pictures possible. You might need to adjust latextool.sh for loading libraries for specific tikz picture.
 
