@@ -61,6 +61,8 @@ Installation
       args = [($5 || '').strip]                    # replaced by
       </pre>
 
+   This splitting will be optional during macro registration in v2.1.0 release of redmine. Take a look in [Macro Option](http://www.redmine.org/issues/11578)   
+
 Specific filters installation instructions are below.
 
 Prefedined Macros
