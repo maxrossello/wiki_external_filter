@@ -53,15 +53,6 @@ Installation
                 )
               /
    </pre>
-   Do not use commas in macro because it would be splited in different arguments and therefore plugin will not work.
-   To solve this comma issue and make also tikz/pgf possible you need to change the line under parse_macros in application_helper.rb
-   which looks 
-      <pre>      
-      #args = ($5 || '').split(',').each(&:strip)  # original
-      args = [($5 || '').strip]                    # replaced by
-      </pre>
-
-   This splitting will be optional during macro registration in v2.1.0 release of redmine. Take a look in [Macro Option](http://www.redmine.org/issues/11578)   
 
 Specific filters installation instructions are below.
 
