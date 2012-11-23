@@ -5,7 +5,7 @@ module WikiExternalFilterHelper
 
   def load_config
     unless @config
-      config_file = "#{Rails.root}/plugins/wiki_external_filter/config/wiki_external_filter.yml"
+      config_file = "#{Rails.root}/config/wiki_external_filter.yml"
       unless File.exists?(config_file)
         raise "Config not found: #{config_file}"
       end
@@ -22,10 +22,10 @@ module WikiExternalFilterHelper
   module_function :load_config, :has_macro
 
   def construct_cache_key(macro, name)
-    ['wiki_external_filter', macro, name].join("/")
+    ['wiki_external_filter', macro, name].join("_")
   end
 
-  def build(text, attachments, macro, info)
+  def build(args, text, attachments, macro, info)
 
     name = Digest::SHA256.hexdigest(text.to_s)
     result = {}
@@ -53,12 +53,12 @@ module WikiExternalFilterHelper
       result[:content] = content
       Rails.logger.debug "from cache: #{cache_key}"
     else
-      result = self.build_forced(text, attachments, info)
+      result = self.build_forced(args, text, attachments, info)
       if result[:status]
         if expires > 0
           begin
             Rails.cache.write cache_key, result[:content], :expires_in => expires.seconds
-	          Rails.logger.debug "cache saved: #{cache_key} expires #{expires.seconds}"
+            Rails.logger.debug "cache saved: #{cache_key} expires #{expires.seconds}"
           rescue
             Rails.logger.error "Failed to save cache: #{cache_key}, result content #{result[:content]}, error: $!"
 	        end
@@ -78,11 +78,11 @@ module WikiExternalFilterHelper
     return result
   end
 
-  def build_forced(text, attachments, info)
+  def build_forced(args, text, attachments, info)
 
 	# joining splitted args
 	# not necessary from v2.1.0
-	text 		  = text.join(", ")
+	# text 		  = text.join(", ")
 
     if info['replace_attachments'] and attachments
       attachments.each do |att|
@@ -168,10 +168,10 @@ module WikiExternalFilterHelper
   end
 
   class Macro
-    def initialize(view, source, attachments, macro, info)
+    def initialize(view, args, source, attachments, macro, info)
       @view = view
       @view.controller.extend(WikiExternalFilterHelper)
-      @result = @view.controller.build(source, attachments, macro, info)
+      @result = @view.controller.build(args, source, attachments, macro, info)
     end
 
     def render()
