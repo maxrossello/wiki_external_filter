@@ -7,9 +7,10 @@ NOT THE ORIGINAL
 ================
 
 This is a fork.
+
 **NOTE: tested only on Redmine v2.3. Only tested plantuml, graphviz and fortune.**
 
-**NOTE: the syntax has been changed in this release (no more parentheses around the arguments)**
+**NOTE: the syntax has been changed in this release (no more parentheses around the arguments).**
 
 Overview
 ========
