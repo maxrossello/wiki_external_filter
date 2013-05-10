@@ -25,6 +25,20 @@ Redmine::Plugin.register :wiki_external_filter do
         m = WikiExternalFilterHelper::Macro.new(self, args, text, obj.respond_to?('page') ? obj.page.attachments : nil, name, info)
         m.render.html_safe
       end
+      # code borrowed from wiki latex plugin
+      # code borrowed from wiki template macro
+      desc info['description']
+      macro (name + "_include").to_sym do |obj, args, text|
+        page = Wiki.find_page(args.to_s, :project => @project)
+        raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
+        @included_wiki_pages ||= []
+        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
+        @included_wiki_pages << page.title
+        m = WikiExternalFilterHelper::Macro.new(self, args, page.content.text, page.attachments, name, info)
+        @included_wiki_pages.pop
+        m.render_block(args.to_s)
+      end
     end
   end
 end
+
