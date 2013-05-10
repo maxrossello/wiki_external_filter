@@ -8,6 +8,7 @@ NOT THE ORIGINAL
 
 This is a fork.
 **NOTE: tested only on Redmine v2.3. Only tested plantuml, graphviz and fortune.**
+
 **NOTE: the syntax has been changed in this release (no more parentheses around the arguments)**
 
 Overview
@@ -170,15 +171,21 @@ Required packages installed:
 
 Example of usage:
 
-    {{video(video_attachment_name.avi)}}
+    {{video
+    video_attachment_name.avi
+    }}
 
 or
 
-    {{video(/full/path/to/the/file/on/the/server/video.avi)}}
+    {{video
+    /full/path/to/the/file/on/the/server/video.avi
+    }}
 
 or
 
-    {{video_url(http://www.example.com/video.avi)}}
+    {{video_url
+    http://www.example.com/video.avi
+    }}
 
 Rendered output (before player is embedded by clicking on the image, using Flowplayer [video demo](http://flowplayer.org/demos/installation/index.html) file):
 
