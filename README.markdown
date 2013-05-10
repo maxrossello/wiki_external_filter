@@ -7,7 +7,8 @@ NOT THE ORIGINAL
 ================
 
 This is a fork.
-**NOTE tested only on Redmine v2.3**
+**NOTE: tested only on Redmine v2.3. Only tested plantuml, graphviz and fortune.**
+**NOTE: the syntax has been changed in this release (no more parentheses around the arguments)**
 
 Overview
 ========
@@ -30,29 +31,13 @@ Installation
    [popen4](http://popen4.rubyforge.org/) library first as without it plugin is
    unable to capture stderr output of external command, so it might be hard to debug
    it if things go wrong.
-   **Note**: If you are using rvm you need to add Gemfile.local with gem 'open4' and execute bundle install otherwise
-   it will not be found in the environment and you will never get in to the require 'open4' section which will rise LoadError.
-2. Get sources from [github](http://github.com/mkinski/wiki_external_filter).
+   **Note**: If you are using rvm you need to run `bundle install` in your redmine root to install the popen4 gem.
+2. Get sources from [github](http://github.com/cdwertmann/wiki_external_filter).
 3. See [Installing a plugin](http://www.redmine.org/wiki/redmine/Plugins) on
    Redmine site.
-5. After installation it's **strongly recommended** to go to plugin settings and
+4. After installation it's **strongly recommended** to go to plugin settings and
    configure caching: Administration -> Plugins -> Wiki External Filter Plugin: Configure and follow instructions.
-6. To successfully use macros with argument expressions, it's necessary
-   to patch wiki formatting routine so that it preserves macros arguments.
-
-   Graphviz will not work until modification MACRO_RE see ungoing [Issue 3061](http://www.redmine.org/issues/3061)
-   under app/helper/application_helper.rb
-   <pre>
-   MACROS_RE = /
-                (!)?                        # escaping
-                (
-                \{\{                        # opening tag
-                ([\w]+)                     # macro name
-                (\((.*)\))?             # optional arguments
-                \}\}                        # closing tag
-                )
-              /
-   </pre>
+5. Copy `config/wiki_external_filter.yml` to `config/wiki_external_filter.yml` in your redmine root. Check all the binary paths inside the file.
 
 Specific filters installation instructions are below.
 
@@ -84,7 +69,7 @@ PlantUML but so far looks like it's still unusable.
 
 Example of usage:
 
-    {{plantuml(
+    {{plantuml
     Alice -> Bob: Authentication Request
     alt successful case
       Bob -> Alice: Authentication Accepted
@@ -98,7 +83,7 @@ Example of usage:
     else Another type of failure
       Bob -> Alice: Please repeat
     end
-    )}}
+    }}
 
 Rendered output:
 
@@ -113,7 +98,7 @@ Result is rendered as SVG image or PNG fallback if SVG is not supported by your 
 
 Example of usage DOT:
 
-    {{graphviz(
+    {{graphviz
     digraph finite_state_machine {
         rankdir=LR;
         size="8.5"
@@ -134,12 +119,12 @@ Example of usage DOT:
         LR_8 -> LR_6 [ label = "S(b)" ];
         LR_8 -> LR_5 [ label = "S(a)" ];
     }
-    )}}
+    }}
 
 Usage of neato:
-    {{gneato(
+    {{gneato
       code like in graphviz
-    )}}
+    }}
 
 Rendered output:
 
@@ -160,9 +145,9 @@ Gentoo ebuilds for [ritex](http://www.ndl.kiev.ua/downloads/ritex-0.3.ebuild.tar
 
 Example of usage:
 
-    {{ritex(
+    {{ritex
     G(y) = \left\{\array{ 1 - e^{-\lambda x} & \text{ if } y \geq 0 \\ 0 & \text{ if } y < 0 }\right.
-    )}}
+    }}
 
 Rendered output:
 
@@ -246,10 +231,8 @@ filter.
 Current bugs/issues
 ===================
 
-1. Either Redmine core (if you use default wiki engine) or your custom wiki engine plugin requires patching to get things work. In fact, the whole
-   wiki formatting design as of now seems to be quite messy.
-2. SVG support is more complex it should have been if all browsers had played by the rules - currently quite some trickery with different XHTML elements/CSS tricks is used to show SVGs properly in major browsers. Of course, there's not that much that can be done for IE as it does not support SVG at all, but now at least the plugin substitutes raster fall-back image for IE if it is available.
-3. For formula support, theoretically ritex alone is sufficient if you have
+1. SVG support is more complex it should have been if all browsers had played by the rules - currently quite some trickery with different XHTML elements/CSS tricks is used to show SVGs properly in major browsers. Of course, there's not that much that can be done for IE as it does not support SVG at all, but now at least the plugin substitutes raster fall-back image for IE if it is available.
+2. For formula support, theoretically ritex alone is sufficient if you have
    MathML-capable browser, however in practice there are too many issues with
    this approach: for example Firefox (actually the onlt MathML-capable
    browser so far, it seems) requires specific DOCTYPE additions that Redmine
@@ -259,10 +242,10 @@ Current bugs/issues
    required for XML output. Hence, the double conversion (WebTeX to MathML
    and then MathML to SVG) is necessary. Once (if ever?) MathML support
    matures in other browser, possibly this can be revisited.
-4. SVGs could have been embedded into HTML page directly (thus allowing to use
+3. SVGs could have been embedded into HTML page directly (thus allowing to use
    redmine links there) but I'm afraid there are similar problems
    as with MathML embedding attempts.
-5. RoR caching support is a mess: no way to expire old files from file-based
+4. RoR caching support is a mess: no way to expire old files from file-based
    cache??? Are you joking???
 
 Additional info
