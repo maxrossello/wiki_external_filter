@@ -7,7 +7,7 @@ NOT THE ORIGINAL
 ================
 
 This is a fork.
-**NOTE works only on Redmine > v2.0**
+**NOTE tested only on Redmine v2.3**
 
 Overview
 ========

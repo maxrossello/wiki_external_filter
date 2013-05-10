@@ -61,10 +61,8 @@ module WikiExternalFilterHelper
             Rails.logger.debug "cache saved: #{cache_key} expires #{expires.seconds}"
           rescue
             Rails.logger.error "Failed to save cache: #{cache_key}, result content #{result[:content]}, error: $!"
-	        end
-        else
-	        raise "please set expires time under plugins settings"
-	      end
+          end
+	end
       else
         raise "Error applying external filter: stdout is #{result[:content]}, stderr is #{result[:errors]}"
       end
@@ -94,7 +92,7 @@ module WikiExternalFilterHelper
     content = []
     errors = ""
 
-    text          = text.gsub("<br />", "\n")
+    text          = text.gsub("<br />", "\n") if text
     Rails.logger.debug "\n Text #{text} \n"
 
     info['outputs'].each do |out|
@@ -107,22 +105,21 @@ module WikiExternalFilterHelper
       # redirection so we can get more info in the case of error.
       begin
         require 'open4'
-
         Open4::popen4(out['command']) { |pid, fin, fout, ferr|
-          fin.write out['prolog'] if out.key?('prolog')
+          fin.puts out['prolog'] if out.key?('prolog')
           fin.write text
-          fin.write out['epilog'] if out.key?('epilog')
+          fin.write "\n"+out['epilog'] if out.key?('epilog')
           fin.close
           c, e = [fout.read, ferr.read]
         }
       rescue LoadError
         IO.popen(out['command'], 'r+b') { |f|
-          f.write out['prolog'] if out.key?('prolog')
+          f.puts out['prolog']+"\n" if out.key?('prolog')
           f.write text
-          f.write out['epilog'] if out.key?('epilog')
+          f.write "\n"+out['epilog'] if out.key?('epilog')
           f.close_write
           c = f.read
-	      }
+      }
       end
 
       Rails.logger.debug("child status: sig=#{$?.termsig}, exit=#{$?.exitstatus}")
