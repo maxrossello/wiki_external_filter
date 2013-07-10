@@ -229,7 +229,7 @@ Additionally, ``cache_seconds`` parameter specifies the number of seconds comman
 output result should be cached, use zero to disable caching for this macro.
 
 The way filter output is visualized is controlled via
-app/views/wiki_external_filter/macro_*.html.erb files. The view to use is selected by  ``template`` macro option in config. The view can use all commands outputs for particular macro.
+app/views/wiki_external_filter/_macro_*.html.erb files. The view to use is selected by  ``template`` macro option in config. The view can use all commands outputs for particular macro.
 
 ``replace_attachments`` tells plugin that it should parse the text passed to the macro and replace all occurrences of strings matching attachments names with their physical paths on disk.
 
