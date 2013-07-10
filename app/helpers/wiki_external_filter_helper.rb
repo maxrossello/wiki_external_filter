@@ -151,17 +151,17 @@ module WikiExternalFilterHelper
     result[:render_type] = 'block'
     result[:wiki_name] = wiki_name
     result[:inside] = render_common(result)
-    html = render_to_string(:template => 'wiki_external_filter/block', :layout => false, :locals => result).chop
+    html = render_to_string(:partial=> 'wiki_external_filter/block', :locals => result).chop
     html << headers_common(result).chop
     html
   end
 
   def render_common(result)
-    render_to_string :template => "wiki_external_filter/macro_#{result[:template]}", :layout => false, :locals => result
+    render_to_string :partial => "wiki_external_filter/macro_#{result[:template]}", :locals => result
   end
 
   def headers_common(result)
-    render_to_string :template => 'wiki_external_filter/headers', :layout => false, :locals => result
+    render_to_string :partial => 'wiki_external_filter/headers', :locals => result
   end
 
   class Macro
