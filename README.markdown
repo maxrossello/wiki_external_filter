@@ -8,9 +8,9 @@ NOT THE ORIGINAL
 
 This is a fork.
 
-**NOTE: tested only on Redmine v2.3. Only tested plantuml, graphviz and fortune.**
+**NOTE: tested on Redmine v3.0.1. Only tested plantuml, graphviz and PGF-TikZ.**
 
-**NOTE: the syntax has been changed in this release (no more parentheses around the arguments).**
+**NOTE: the syntax has been changed from the original (no parentheses around the arguments).**
 
 Overview
 ========
