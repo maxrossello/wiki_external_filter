@@ -33,10 +33,10 @@ development: &development
     description: "Constructs graph image from its textual description in DOT language, see http://www.graphviz.org"
     template: image
     outputs:
-      - command: "/usr/bin/dot -Tsvg"
-        content_type: "image/svg+xml"
-    #  - command: "/usr/bin/dot -Tpng"
-    #    content_type: "image/png"
+    #- command: "/usr/bin/dot -Tsvg"
+    #        content_type: "image/svg+xml"
+      - command: "/usr/bin/dot -Tpng"
+        content_type: "image/png"
   gneato:
     description: "Constructs graph image from its textual description in NEATO language, see http://www.graphviz.org"
     template: image
@@ -79,7 +79,7 @@ development: &development
         content_type: "text/plain"
 
 test:
-  type: mock
+  <<: *development
 
 production:
   <<: *development
